@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+  <library_materials>
+    <material id="lambert1" name="lambert1">
+      <instance_effect url="#lambert1-fx"/>
+    </material>
+  </library_materials>
+  <library_effects>
+    <effect id="lambert1-fx">
+      <profile_COMMON>
+        <technique sid="common">
+          <lambert>
+            <emission>
+              <color>0 0 0 1</color>
+            </emission>
+            <ambient>
+              <color>0 0 0 1</color>
+            </ambient>
+            <diffuse>
+              <color>0.4 0.4 0.4 1</color>
+            </diffuse>
+            <transparent opaque="RGB_ZERO">
+              <color>0 0 0 1</color>
+            </transparent>
+            <transparency>
+              <float>1</float>
+            </transparency>
+          </lambert>
+        </technique>
+      </profile_COMMON>
+    </effect>
+  </library_effects>
+  <library_controllers>
+    <controller id="pPlaneShape1-skin" name="skinCluster1">
+      <skin source="#pPlaneShape1">
+        <bind_shape_matrix>1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</bind_shape_matrix>
+        <source id="pPlaneShape1-skin-joints" name="pPlaneShape1-skin-joints">
+          <Name_array id="pPlaneShape1-skin-joints-array" count="1">joint1</Name_array>
+          <technique_common>
+            <accessor source="#pPlaneShape1-skin-joints-array" count="1" stride="1">
+              <param name="JOINT" type="name"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="pPlaneShape1-skin-bind_poses" name="pPlaneShape1-skin-bind_poses">
+          <float_array id="pPlaneShape1-skin-bind_poses-array" count="16">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</float_array>
+          <technique_common>
+            <accessor source="#pPlaneShape1-skin-bind_poses-array" count="1" stride="16">
+              <param name="TRANSFORM" type="float4x4"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="pPlaneShape1-skin-weights" name="pPlaneShape1-skin-weights">
+          <float_array id="pPlaneShape1-skin-weights-array" count="1">1 </float_array>
+          <technique_common>
+            <accessor source="#pPlaneShape1-skin-weights-array" count="1" stride="1">
+              <param name="WEIGHT" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <joints>
+          <input semantic="JOINT" source="#pPlaneShape1-skin-joints"/>
+          <input semantic="INV_BIND_MATRIX" source="#pPlaneShape1-skin-bind_poses"/>
+        </joints>
+        <vertex_weights count="3">
+          <input semantic="JOINT" source="#pPlaneShape1-skin-joints" offset="0"/>
+          <input semantic="WEIGHT" source="#pPlaneShape1-skin-weights" offset="1"/>
+          <vcount>1 1 1 </vcount>
+          <v>0 0 0 0 0 0 </v>
+        </vertex_weights>
+      </skin>
+    </controller>
+  </library_controllers>
+  <library_geometries>
+    <geometry id="pPlaneShape1" name="pPlaneShape1">
+      <mesh>
+        <source id="pPlaneShape1-positions" name="pPlaneShape1-positions">
+          <float_array id="pPlaneShape1-positions-array" count="9">-0.5 0 0.5 0.5 0 0.5 -0.5 0 -0.5</float_array>
+          <technique_common>
+            <accessor source="#pPlaneShape1-positions-array" count="3" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="pPlaneShape1-normals" name="pPlaneShape1-normals">
+          <float_array id="pPlaneShape1-normals-array" count="9">0 1 0 0 1 0 0 1 0</float_array>
+          <technique_common>
+            <accessor source="#pPlaneShape1-normals-array" count="3" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="pPlaneShape1-map1" name="pPlaneShape1-map1">
+          <float_array id="pPlaneShape1-map1-array" count="6">0 0 1 0 0 1</float_array>
+          <technique_common>
+            <accessor source="#pPlaneShape1-map1-array" count="3" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="pPlaneShape1-vertices" name="pPlaneShape1-vertices">
+          <input semantic="POSITION" source="#pPlaneShape1-positions"/>
+          <input semantic="NORMAL" source="#pPlaneShape1-normals"/>
+        </vertices>
+        <triangles material="initialShadingGroup" count="1">
+          <input semantic="VERTEX" source="#pPlaneShape1-vertices" offset="0"/>
+          <input semantic="TEXCOORD" source="#pPlaneShape1-map1" offset="1" set="0"/>
+          <p>0 0 1 1 2 2</p>
+        </triangles>
+      </mesh>
+      <extra>
+        <technique profile="MAYA">
+          <double_sided>1</double_sided>
+        </technique>
+      </extra>
+    </geometry>
+  </library_geometries>
+  <library_visual_scenes>
+    <visual_scene id="VisualSceneNode" name="one_triangle_one_joint">
+      <node id="pPlane1" name="pPlane1" type="NODE">
+        <translate sid="translate">0 0 0</translate>
+        <rotate sid="rotateZ">0 0 1 0</rotate>
+        <rotate sid="rotateY">0 1 0 0</rotate>
+        <rotate sid="rotateX">1 0 0 0</rotate>
+        <instance_controller url="#pPlaneShape1-skin">
+          <skeleton>#joint1</skeleton>
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="initialShadingGroup" target="#lambert1"/>
+            </technique_common>
+          </bind_material>
+        </instance_controller>
+      </node>
+      <node id="joint1" name="joint1" sid="joint1" type="JOINT">
+        <translate sid="translate">0 0 0</translate>
+        <rotate sid="jointOrientZ">0 0 1 0</rotate>
+        <rotate sid="jointOrientY">0 1 0 0</rotate>
+        <rotate sid="jointOrientX">1 0 0 0</rotate>
+        <rotate sid="rotateZ">0 0 1 0</rotate>
+        <rotate sid="rotateY">0 1 0 0</rotate>
+        <rotate sid="rotateX">1 0 0 0</rotate>
+        <extra>
+          <technique profile="MAYA">
+            <segment_scale_compensate>1</segment_scale_compensate>
+          </technique>
+        </extra>
+      </node>
+    </visual_scene>
+  </library_visual_scenes>
+  <library_animations>
+    <animation id="joint1.translate_joint1">
+      <source id="joint1.translate_joint1_translate-input" name="joint1.translate_joint1_translate-input">
+        <float_array id="joint1.translate_joint1_translate-input-array" count="2">0.0416667 1 </float_array>
+        <technique_common>
+          <accessor source="#joint1.translate_joint1_translate-input-array" count="2" stride="1">
+            <param name="TIME" type="float"/>
+          </accessor>
+        </technique_common>
+        <technique profile="MAYA">
+          <pre_infinity>CONSTANT</pre_infinity>
+          <post_infinity>CONSTANT</post_infinity>
+        </technique>
+      </source>
+      <source id="joint1.translate_joint1_translate-output" name="joint1.translate_joint1_translate-output">
+        <float_array id="joint1.translate_joint1_translate-output-array" count="6">0 0 0 1 1 1 </float_array>
+        <technique_common>
+          <accessor source="#joint1.translate_joint1_translate-output-array" count="2" stride="3">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+            <param name="Z" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="joint1.translate_joint1_translate-interpolation" name="joint1.translate_joint1_translate-interpolation">
+        <Name_array id="joint1.translate_joint1_translate-interpolation-array" count="2">BEZIER BEZIER </Name_array>
+        <technique_common>
+          <accessor source="#joint1.translate_joint1_translate-interpolation-array" count="2" stride="1">
+            <param name="INTERPOLATION" type="name"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="joint1.translate_joint1_translate-intangent" name="joint1.translate_joint1_translate-intangent">
+        <float_array id="joint1.translate_joint1_translate-intangent-array" count="12">-0.291667 -0.347826 -0.291667 -0.347826 -0.291667 -0.347826 0.680556 0.666667 0.680556 0.666667 0.680556 0.666667 </float_array>
+        <technique_common>
+          <accessor source="#joint1.translate_joint1_translate-intangent-array" count="2" stride="6">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="joint1.translate_joint1_translate-outtangent" name="joint1.translate_joint1_translate-outtangent">
+        <float_array id="joint1.translate_joint1_translate-outtangent-array" count="12">0.361111 0.333333 0.361111 0.333333 0.361111 0.333333 1.33333 1.34783 1.33333 1.34783 1.33333 1.34783 </float_array>
+        <technique_common>
+          <accessor source="#joint1.translate_joint1_translate-outtangent-array" count="2" stride="6">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <sampler id="joint1.translate_joint1_translate-sampler">
+        <input semantic="INPUT" source="#joint1.translate_joint1_translate-input"/>
+        <input semantic="OUTPUT" source="#joint1.translate_joint1_translate-output"/>
+        <input semantic="INTERPOLATION" source="#joint1.translate_joint1_translate-interpolation"/>
+        <input semantic="IN_TANGENT" source="#joint1.translate_joint1_translate-intangent"/>
+        <input semantic="OUT_TANGENT" source="#joint1.translate_joint1_translate-outtangent"/>
+      </sampler>
+      <channel source="#joint1.translate_joint1_translate-sampler" target="joint1/translate"/>
+    </animation>
+  </library_animations>
+  <scene>
+    <instance_visual_scene url="#VisualSceneNode"/>
+  </scene>
+</COLLADA>

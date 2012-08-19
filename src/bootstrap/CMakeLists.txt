@@ -1,0 +1,4 @@
+
+FILE(GLOB BOOTSTRAP_SOURCES *.h *.cc)
+ADD_EXECUTABLE(bootstrap WIN32 ${BOOTSTRAP_SOURCES})
+TARGET_LINK_LIBRARIES(bootstrap util graphic util math spatial ${SCRATCH_LIBRARIES})

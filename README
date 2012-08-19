@@ -1,0 +1,95 @@
+
+I recommend using MSYS from MinGW package and installing all libraries to
+c:/MinGW/msys/1.0/local which will equal to /usr/local path in MinGW Shell.
+This makes building and installing procedure much easier because we'll be
+able to use all the goods of unix world.
+
+I used following versions of libraries and tools on latest  successful build:
+SDL 1.2.15
+SDL_image 1.2.12
+SDL_ttf 2.0.11
+Boost 1.48.0
+CMake 2.8.9
+FreeType 2.4.2
+log4cplus 1.0.4.1
+Lua 5.1.5
+LuaBind 0.9.1
+MinGW pre-packaged repository catalogues 20120426
+Xerces-C 3.1.1
+ZLib 1.2.7
+
+1. MinGW
+
+Choose "C++ Compiler" and "MSYS Basic System" options in installer. I installed
+it to default location c:/MinGW.
+
+
+2. Boost 1.48.0
+
+We have to use Boost 1.48.0 because of incompatibility between Boost 1.49 and GCC 4.6 for Boost.Preprocessor, see https://svn.boost.org/trac/boost/ticket/6631 for details.
+
+$ bootstrap.sh --with-toolset=mingw
+
+# boost's build system lacks mingw.jam so we'll use gcc one, please
+# see https://svn.boost.org/trac/boost/ticket/6350 for details
+# (please ignore "sed: preserving permissions ..." error)
+$ sed -i 's/mingw/gcc/g' project-config.jam
+
+# b2 knows nothing about MSYS so we have to specify install location in Windows terms
+$ b2 --without-python --without-mpi --variant=debug,release link=shared threading=multi toolset=gcc install --prefix=d:/MinGW/msys/1.0/local
+
+
+3. Lua 5.1.5
+
+Lua 5.2 is not yet supported by LuaBind, so we'll use 5.1.5.
+
+Apply following patch to src/Makefile:
+
+107c107
+< 	$(MAKE) "LUA_A=lua51.dll" "LUA_T=lua.exe" \
+---
+> 	$(MAKE) "LUA_A=lua5.1.dll" "LUA_T=lua.exe" \
+109c109
+< 	"MYCFLAGS=-DLUA_BUILD_AS_DLL" "MYLIBS=" "MYLDFLAGS=-s" lua.exe
+---
+> 	"MYCFLAGS=-DLUA_DL_DLL -DLUA_BUILD_AS_DLL" "MYLIBS=" "MYLDFLAGS=-s" lua.exe 
+
+$ make mingw install
+$ cp src/lua5.1.dll /usr/local/lib/
+$ rm /usr/local/lib/liblua.a
+
+
+4. LuaBind
+
+We have to use default CMD (Windows) shell for this one.
+
+# set paths to Lua, Boost and MinGW (don't forget to change actual values for
+# your ones)
+> set PATH=%PATH%;c:\MinGW\bin
+> set LUA_PATH=c:\MinGW\msys\1.0\local
+> set BOOST_ROOT=d:\build\boost_1_48_0
+
+# build and install LuaBind into MSYS
+> d:/build/boost_1_48_0/bjam.exe variant=release,debug link=shared threading=multi -j2 toolset=gcc install --prefix=c:/MinGW/msys/1.0/local
+
+
+5. Xerces-C 3.1
+
+$ ./configure
+$ make libxerces_c_la_LDFLAGS="-release 3.1 -no-undefined" install
+
+
+6. ZLib
+
+$ mingw32-make.exe -f win32/Makefile.gcc BINARY_PATH=/usr/local/bin/ LIBRARY_PATH=/usr/local/lib/ INCLUDE_PATH=/usr/local/include/ install
+
+
+7. SDL, log4cplus, FreeType, SDL_image, SDL_ttf, CMake
+
+Use standard autotools procedure:
+$ ./configure && make install
+
+I used FreeType 2.4.2 because I had problems compiling 2.3.5-1 (stable).
+I used 1.0.4.1 because I had problems with newer release candidate versions.
+Use configure --prefix=/usr/local for CMake -- it tries to install itself
+to Program Files by default.
